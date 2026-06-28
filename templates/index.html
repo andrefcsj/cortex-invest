@@ -242,7 +242,7 @@
                                 {% endif %}
                             </td>
                             <td class="p-4 text-emerald-400">R$ {{ "{:,.2f}".format(op.premio).replace(".", ",") }}</td>
-                            <td class="p-4 font-medium text-gray-300">{{ op.contratos }} ({% id %}{{ op.contratos * 100 }} un)</td>
+                           <td class="p-4 font-medium text-gray-300">{{ op.contratos }} ({{ op.contratos * 100 }} un)</td>
                             <td class="p-4 font-bold text-emerald-400">R$ {{ "{:,.2f}".format(op.premio_liquido).replace(",", "X").replace(".", ",").replace("X", ".") }}</td>
                             <td class="p-4 text-gray-400">{{ op.vencimento }}</td>
                             <td class="p-4">
