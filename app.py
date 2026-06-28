@@ -1,5 +1,6 @@
 import os
 import sqlite3
+import re
 from datetime import datetime
 from flask import Flask, render_template, request, redirect, url_for, jsonify
 import yfinance as yf
@@ -7,7 +8,6 @@ import yfinance as yf
 app = Flask(__name__)
 DATABASE = 'cortex_invest.db'
 
-# Defina aqui o seu Capital Total de banca para os cálculos de %
 CAPITAL_TOTAL_FIXO = 4000.00
 
 def get_db_connection():
@@ -41,20 +41,32 @@ def init_db():
 
 init_db()
 
-def buscar_cotacao(ativo_nome):
-    # Remove final de opções para buscar a ação mãe no yfinance (Ex: BBDCS167 -> BBDC4)
-    # Se for ativo com tamanho de opção (7 ou 8 letras), tenta aproximar ou deixa o usuário digitar.
-    # Por segurança, se for um ticker padrão de ação brasileira (4 letras + número), põe .SA
-    ticker_limpo = ''.join([i for i in ativo_nome if not i.isdigit()]).upper()
+def buscar_cotacao_acao_mae(codigo_ativo):
+    """
+    Extrai as 4 letras iniciais do ticker de opção (ex: CPLES15 -> CPLE) 
+    e descobre a cotação da ação mãe mais comum (geralmente ordinária ou preferencial)
+    """
+    # Pega apenas as letras iniciais do código digitado
+    letras = re.sub(r'[^a-zA-Z]', '', codigo_ativo).upper()
     
-    # Tentativa simples de pegar o ativo raiz (ex: PETR4) para cotação do painel
-    # Caso seja o código direto da opção, yfinance pode não achar direto sem API paga,
-    # então colocamos um try/except seguro para não quebrar o site.
-    if len(ativo_nome) <= 5:
-        ticker_nome = f"{ativo_nome.upper()}.SA" if not ativo_nome.endswith('.SA') else ativo_nome.upper()
+    if len(letras) == 4:
+        # Padrões comuns da B3 (BBDC4, CPLE6, PETR4, ITSA4)
+        mapeamento_comum = {
+            "CPLE": "CPLE6",
+            "BBDC": "BBDC4",
+            "ITSA": "ITSA4",
+            "GOAU": "GOAU4",
+            "PETR": "PETR4",
+            "VALE": "VALE3"
+        }
+        ticker_mae = mapeamento_comum.get(letras, f"{letras}4")
     else:
-        # Se for código de opção comprido, pegamos as 4 primeiras letras + 4 (ex: PETR4)
-        ticker_nome = f"{ativo_nome[:4]}4.SA"
+        ticker_mae = codigo_ativo.upper()
+
+    if not ticker_mae.endswith('.SA'):
+        ticker_nome = f"{ticker_mae}.SA"
+    else:
+        ticker_nome = ticker_mae
 
     try:
         ticker = yf.Ticker(ticker_nome)
@@ -78,16 +90,14 @@ def index():
     
     qtd_abertas = 0
     qtd_encerradas = 0
-
     hoje = datetime.now().date()
 
     for row in operacoes_rows:
         op = dict(row)
         
-        # Buscar cotação simplificada do ativo base
-        op['cotacao_atual'] = buscar_cotacao(op['ativo'])
+        # Puxa dinamicamente a cotação da ação mãe
+        op['cotacao_atual'] = buscar_cotacao_acao_mae(op['ativo'])
         
-        # Calcular dias restantes até o vencimento
         try:
             venc_dt = datetime.strptime(op['vencimento'], '%Y-%m-%d').date()
             op['dias_restantes'] = (venc_dt - hoje).days
@@ -96,19 +106,15 @@ def index():
         except:
             op['dias_restantes'] = 0
 
-        # Lógica Financeira do Pro:
-        # Volume financeiro do lote (Contratos x 100 x Strike)
         multiplicador_lote = op['contratos'] * 100
         valor_nocional = op['strike'] * multiplicador_lote
         
         if op['status'] == 'Aberta':
             qtd_abertas += 1
             total_premios_ativos += op['premio_liquido']
-            # Na Wheel Strategy, a PUT compromete seu caixa para compra
             if op['tipo'].upper() == 'PUT':
                 capital_comprometido += valor_nocional
             else:
-                # Se for CALL, o capital comprometido é o valor das ações que você já possui
                 capital_comprometido += (op['cotacao_atual'] if op['cotacao_atual'] > 0 else op['strike']) * multiplicador_lote
         else:
             qtd_encerradas += 1
@@ -116,12 +122,13 @@ def index():
 
         operacoes.append(op)
 
-    # Cálculos exatos dos cards superiores do Dashboard Pro
+    # Corrigindo cálculos solicitados para a v2.1
     darf_mes = round(total_lucro_mes * 0.15, 2) if total_lucro_mes > 0 else 0.0
-    
     pct_capital_comprometido = round((capital_comprometido / CAPITAL_TOTAL_FIXO) * 100, 2) if CAPITAL_TOTAL_FIXO > 0 else 0.0
     roi_mes = round((total_lucro_mes / CAPITAL_TOTAL_FIXO) * 100, 2) if CAPITAL_TOTAL_FIXO > 0 else 0.0
-    roi_abertas = round((total_premios_ativos / CAPITAL_TOTAL_FIXO) * 100, 2) if CAPITAL_TOTAL_FIXO > 0 else 0.0
+    
+    # Recálculo exato do ROI das Abertas sobre o Capital que está real comprometido
+    roi_abertas = round((total_premios_ativos / capital_comprometido) * 100, 2) if capital_comprometido > 0 else 0.0
 
     return render_template('index.html', 
                            operacoes=operacoes, 
@@ -152,10 +159,8 @@ def nova_operacao():
     alerta = request.form['alerta']
     
     data_insercao = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
-
-    # Ajuste do cálculo do prêmio líquido recebido (Prêmio Unitário x Contratos x 100)
     premio_bruto_total = premio * contratos * 100
-    irrf = round(premio_bruto_total * 0.00005, 2) # Ajustado para alíquota real de daytrade/posição de Opções
+    irrf = round(premio_bruto_total * 0.00005, 2)
     premio_liquido = round(premio_bruto_total - custos - irrf, 2)
 
     conn = get_db_connection()
