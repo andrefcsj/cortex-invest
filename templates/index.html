@@ -3,22 +3,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CORTEX INVEST PRO v2.0</title>
+    <title>CORTEX INVEST PRO v2.1</title>
     <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
-        body {
-            background-color: #060b13;
-            color: #f3f4f6;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-        }
-        .sidebar {
-            background-color: #0a111e;
-        }
-        .card-bg {
-            background: linear-gradient(135deg, #0d1726 0%, #09101a 100%);
-            border: 1px solid #16253b;
-        }
+        body { background-color: #060b13; color: #f3f4f6; font-family: 'Segoe UI', sans-serif; }
+        .sidebar { background-color: #0a111e; }
+        .card-bg { background: linear-gradient(135deg, #0d1726 0%, #09101a 100%); border: 1px solid #16253b; }
     </style>
 </head>
 <body class="flex min-h-screen">
@@ -40,12 +32,6 @@
                 <a href="#" class="flex items-center space-x-3 text-gray-400 hover:bg-[#131f33] hover:text-white px-4 py-2.5 rounded-lg text-sm font-medium transition">
                     <i class="fa-solid fa-folder-open w-5"></i> <span>OPERAÇÕES ABERTAS</span>
                 </a>
-                <a href="#" class="flex items-center space-x-3 text-gray-400 hover:bg-[#131f33] hover:text-white px-4 py-2.5 rounded-lg text-sm font-medium transition">
-                    <i class="fa-solid fa-calendar-days w-5"></i> <span>CALENDÁRIO</span>
-                </a>
-                <a href="#" class="flex items-center space-x-3 text-gray-400 hover:bg-[#131f33] hover:text-white px-4 py-2.5 rounded-lg text-sm font-medium transition">
-                    <i class="fa-solid fa-clock-rotate-left w-5"></i> <span>HISTÓRICO MENSAL</span>
-                </a>
             </nav>
         </div>
         
@@ -53,7 +39,7 @@
             <p class="text-xs text-gray-400 tracking-wider">CORTEX SCORE</p>
             <div class="text-3xl font-black text-green-400 my-1">9,3</div>
             <span class="bg-green-500/20 text-green-400 text-[10px] px-2 py-0.5 rounded-full font-bold">EXCELENTE</span>
-            <div class="text-[10px] text-gray-500 mt-3">VERSAO 2.0</div>
+            <div class="text-[10px] text-gray-500 mt-3">VERSÃO 2.1</div>
         </div>
     </div>
 
@@ -61,164 +47,138 @@
         
         <div class="flex justify-between items-center mb-8">
             <div>
-                <h2 class="text-2xl font-bold text-white tracking-tight">DASHBOARD PRO v2.0</h2>
-                <p class="text-xs text-gray-400 mt-0.5">Painel automático com prêmios mensais, ROI de abertas e histórico por mês</p>
+                <h2 class="text-2xl font-bold text-white tracking-tight">DASHBOARD PRO v2.1</h2>
+                <p class="text-xs text-gray-400 mt-0.5">Cálculos refinados, cotação mãe automatizada e velocímetro de ROI</p>
             </div>
-            <div class="flex items-center space-x-4">
-                <button onclick="window.location.reload();" class="bg-blue-600 hover:bg-blue-700 text-white text-xs font-semibold px-4 py-2 rounded-lg flex items-center space-x-2 transition shadow-lg shadow-blue-600/20 cursor-pointer">
-                    <i class="fa-solid fa-rotate"></i> <span>ATUALIZAR DADOS</span>
-                </button>
-            </div>
+            <button onclick="window.location.reload();" class="bg-blue-600 hover:bg-blue-700 text-white text-xs font-semibold px-4 py-2 rounded-lg flex items-center space-x-2 transition shadow-lg shadow-blue-600/20 cursor-pointer">
+                <i class="fa-solid fa-rotate"></i> <span>ATUALIZAR DADOS</span>
+            </button>
         </div>
 
         <div class="grid grid-cols-1 md:grid-cols-4 lg:grid-cols-7 gap-4 mb-8">
-            <div class="card-bg p-4 rounded-xl relative overflow-hidden border-t-4 border-blue-500">
-                <div class="flex justify-between items-start text-gray-400 mb-2">
-                    <span class="text-[10px] font-bold tracking-wider">CAPITAL TOTAL</span>
-                    <i class="fa-solid fa-landmark text-blue-500 text-xs"></i>
-                </div>
+            <div class="card-bg p-4 rounded-xl border-t-4 border-blue-500">
+                <div class="text-[10px] font-bold text-gray-400 mb-2 uppercase tracking-wider">CAPITAL TOTAL</div>
                 <div class="text-base font-bold text-white">R$ {{ "{:,.2f}".format(capital_total).replace(",", "X").replace(".", ",").replace("X", ".") }}</div>
-                <div class="text-[9px] text-gray-500 mt-1">100% do capital</div>
+                <div class="text-[9px] text-gray-500 mt-1">100% de banca</div>
             </div>
             
-            <div class="card-bg p-4 rounded-xl relative overflow-hidden border-t-4 border-amber-500">
-                <div class="flex justify-between items-start text-gray-400 mb-2">
-                    <span class="text-[10px] font-bold tracking-wider">COMPROMETIDO</span>
-                    <i class="fa-solid fa-lock text-amber-500 text-xs"></i>
-                </div>
+            <div class="card-bg p-4 rounded-xl border-t-4 border-amber-500">
+                <div class="text-[10px] font-bold text-gray-400 mb-2 uppercase tracking-wider">COMPROMETIDO</div>
                 <div class="text-base font-bold text-white">R$ {{ "{:,.2f}".format(capital_comprometido).replace(",", "X").replace(".", ",").replace("X", ".") }}</div>
-                <div class="text-[9px] text-amber-400 mt-1">{{ pct_comprometido }}% do capital</div>
+                <div class="text-[9px] text-amber-400 mt-1">{{ pct_comprometido }}% do cap.</div>
             </div>
 
-            <div class="card-bg p-4 rounded-xl relative overflow-hidden border-t-4 border-purple-500">
-                <div class="flex justify-between items-start text-gray-400 mb-2">
-                    <span class="text-[10px] font-bold tracking-wider">PRÊMIOS ATIVOS</span>
-                    <i class="fa-solid fa-gift text-purple-500 text-xs"></i>
-                </div>
+            <div class="card-bg p-4 rounded-xl border-t-4 border-purple-500">
+                <div class="text-[10px] font-bold text-gray-400 mb-2 uppercase tracking-wider">PRÊMIOS ATIVOS</div>
                 <div class="text-base font-bold text-white">R$ {{ "{:,.2f}".format(total_premios_ativos).replace(",", "X").replace(".", ",").replace("X", ".") }}</div>
-                <div class="text-[9px] text-gray-500 mt-1">Total em aberto</div>
+                <div class="text-[9px] text-gray-500 mt-1">Total aberto</div>
             </div>
 
-            <div class="card-bg p-4 rounded-xl relative overflow-hidden border-t-4 border-green-500">
-                <div class="flex justify-between items-start text-gray-400 mb-2">
-                    <span class="text-[10px] font-bold tracking-wider">LUCRO DO MÊS</span>
-                    <i class="fa-solid fa-chart-line text-green-500 text-xs"></i>
-                </div>
+            <div class="card-bg p-4 rounded-xl border-t-4 border-green-500">
+                <div class="text-[10px] font-bold text-gray-400 mb-2 uppercase tracking-wider">LUCRO DO MÊS</div>
                 <div class="text-base font-bold text-green-400">R$ {{ "{:,.2f}".format(total_lucro_mes).replace(",", "X").replace(".", ",").replace("X", ".") }}</div>
                 <div class="text-[9px] text-gray-500 mt-1">Lançamentos fechados</div>
             </div>
 
-            <div class="card-bg p-4 rounded-xl relative overflow-hidden border-t-4 border-red-500">
-                <div class="flex justify-between items-start text-gray-400 mb-2">
-                    <span class="text-[10px] font-bold tracking-wider">DARF DO MÊS</span>
-                    <i class="fa-solid fa-building-columns text-red-500 text-xs"></i>
-                </div>
-                <div class="text-base font-bold text-white">R$ {{ "{:,.2f}".format(darf_mes).replace(",", "X").replace(".", ",").replace("X", ".") }}</div>
-                <div class="text-[9px] text-red-400 mt-1">15% s/ opções</div>
+            <div class="card-bg p-4 rounded-xl border-t-4 border-red-500">
+                <div class="text-[10px] font-bold text-gray-400 mb-2 uppercase tracking-wider">DARF DO MÊS</div>
+                <div class="text-base font-bold text-red-400">R$ {{ "{:,.2f}".format(darf_mes).replace(",", "X").replace(".", ",").replace("X", ".") }}</div>
+                <div class="text-[9px] text-gray-500 mt-1">15% s/ lucro real</div>
             </div>
 
-            <div class="card-bg p-4 rounded-xl relative overflow-hidden border-t-4 border-cyan-500">
-                <div class="flex justify-between items-start text-gray-400 mb-2">
-                    <span class="text-[10px] font-bold tracking-wider">ROI MÊS</span>
-                    <i class="fa-solid fa-percent text-cyan-500 text-xs"></i>
-                </div>
+            <div class="card-bg p-4 rounded-xl border-t-4 border-cyan-500">
+                <div class="text-[10px] font-bold text-gray-400 mb-2 uppercase tracking-wider">ROI MÊS</div>
                 <div class="text-base font-bold text-white">{{ roi_mes }}%</div>
                 <div class="text-[9px] text-gray-500 mt-1">Sobre banca total</div>
             </div>
 
-            <div class="card-bg p-4 rounded-xl relative overflow-hidden border-t-4 border-emerald-500">
-                <div class="flex justify-between items-start text-gray-400 mb-2">
-                    <span class="text-[10px] font-bold tracking-wider">ROI ABERTAS</span>
-                    <i class="fa-solid fa-bullseye text-emerald-500 text-xs"></i>
-                </div>
+            <div class="card-bg p-4 rounded-xl border-t-4 border-emerald-500">
+                <div class="text-[10px] font-bold text-gray-400 mb-2 uppercase tracking-wider">ROI ABERTAS</div>
                 <div class="text-base font-bold text-emerald-400">{{ roi_abertas }}%</div>
-                <div class="text-[9px] text-gray-500 mt-1">Rentabilidade atual</div>
+                <div class="text-[9px] text-gray-500 mt-1">S/ cap alocado</div>
             </div>
         </div>
 
-        <div class="card-bg p-5 rounded-2xl mb-8">
-            <h3 class="text-sm font-bold text-white mb-4 flex items-center space-x-2">
-                <i class="fa-solid fa-plus text-blue-500"></i> <span>LANÇAR NOVA OPERAÇÃO (WHEEL STRATEGY)</span>
-            </h3>
-            <form action="/nova_operacao" method="POST" class="grid grid-cols-2 md:grid-cols-6 gap-4 text-xs">
-                <div>
-                    <label class="block text-gray-400 mb-1">Ativo/Opção</label>
-                    <input type="text" name="ativo" placeholder="Ex: CPLES15" required class="w-full bg-[#131f33] border border-[#16253b] rounded-lg p-2 text-white focus:outline-none focus:border-blue-500 uppercase">
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+            <div class="card-bg p-6 rounded-2xl flex flex-col items-center justify-center">
+                <h4 class="text-xs font-bold text-gray-400 tracking-wider mb-4 uppercase">Velocímetro ROI Abertas</h4>
+                <div class="relative w-48 h-24">
+                    <canvas id="velocimetroRoi"></canvas>
+                    <div class="absolute bottom-0 inset-x-0 text-center">
+                        <span class="text-2xl font-black text-white">{{ roi_abertas }}%</span>
+                        <p class="text-[10px] text-emerald-400 font-semibold uppercase mt-0.5">Meta: > 2,00%</p>
+                    </div>
                 </div>
-                <div>
-                    <label class="block text-gray-400 mb-1">Tipo</label>
-                    <select name="tipo" class="w-full bg-[#131f33] border border-[#16253b] rounded-lg p-2 text-white focus:outline-none focus:border-blue-500">
-                        <option value="PUT">PUT (Venda)</option>
-                        <option value="CALL">CALL (Venda)</option>
-                    </select>
-                </div>
-                <div>
-                    <label class="block text-gray-400 mb-1">Strike (R$)</label>
-                    <input type="number" name="strike" step="0.01" placeholder="15.28" required class="w-full bg-[#131f33] border border-[#16253b] rounded-lg p-2 text-white focus:outline-none focus:border-blue-500">
-                </div>
-                <div>
-                    <label class="block text-gray-400 mb-1">Prêmio Unitário (R$)</label>
-                    <input type="number" name="premio" step="0.01" placeholder="0.45" required class="w-full bg-[#131f33] border border-[#16253b] rounded-lg p-2 text-white focus:outline-none focus:border-blue-500">
-                </div>
-                <div>
-                    <label class="block text-gray-400 mb-1">Contratos (Lotes)</label>
-                    <input type="number" name="contratos" value="1" min="1" class="w-full bg-[#131f33] border border-[#16253b] rounded-lg p-2 text-white focus:outline-none focus:border-blue-500">
-                </div>
-                <div>
-                    <label class="block text-gray-400 mb-1">Vencimento</label>
-                    <input type="date" name="vencimento" required class="w-full bg-[#131f33] border border-[#16253b] rounded-lg p-2 text-white focus:outline-none focus:border-blue-500">
-                </div>
-                <div>
-                    <label class="block text-gray-400 mb-1">Taxas/Custos (R$)</label>
-                    <input type="number" name="custos" step="0.01" value="0.00" class="w-full bg-[#131f33] border border-[#16253b] rounded-lg p-2 text-white focus:outline-none focus:border-blue-500">
-                </div>
-                <div>
-                    <label class="block text-gray-400 mb-1">Estratégia</label>
-                    <input type="text" name="estrategia" value="Wheel Strategy" class="w-full bg-[#131f33] border border-[#16253b] rounded-lg p-2 text-white focus:outline-none focus:border-blue-500">
-                </div>
-                <div>
-                    <label class="block text-gray-400 mb-1">Status</label>
-                    <select name="status" class="w-full bg-[#131f33] border border-[#16253b] rounded-lg p-2 text-white focus:outline-none focus:border-blue-500">
-                        <option value="Aberta">Aberta</option>
-                        <option value="Encerrada">Encerrada</option>
-                    </select>
-                </div>
-                <div>
-                    <label class="block text-gray-400 mb-1">Nota Ganhos (0-10)</label>
-                    <input type="number" name="nota" value="10" min="0" max="10" class="w-full bg-[#131f33] border border-[#16253b] rounded-lg p-2 text-white focus:outline-none focus:border-blue-500">
-                </div>
-                <div class="md:col-span-2">
-                    <label class="block text-gray-400 mb-1">Alertas / Observações</label>
-                    <input type="text" name="alerta" placeholder="Ex: Próximo ao suporte principal" class="w-full bg-[#131f33] border border-[#16253b] rounded-lg p-2 text-white focus:outline-none focus:border-blue-500">
-                </div>
-                <div class="md:col-span-6 flex justify-end mt-2">
-                    <button type="submit" class="bg-emerald-600 hover:bg-emerald-700 text-white font-bold px-6 py-2 rounded-lg transition shadow-lg shadow-emerald-600/10 cursor-pointer">
-                        SALVAR OPERAÇÃO
-                    </button>
-                </div>
-            </form>
+            </div>
+            
+            <div class="card-bg p-5 rounded-2xl md:col-span-2">
+                <h3 class="text-sm font-bold text-white mb-3 flex items-center space-x-2">
+                    <i class="fa-solid fa-plus text-blue-500"></i> <span>LANÇAR OPERAÇÃO</span>
+                </h3>
+                <form action="/nova_operacao" method="POST" class="grid grid-cols-2 md:grid-cols-4 gap-3 text-xs">
+                    <div>
+                        <label class="block text-gray-400 mb-0.5">Opção/Ativo</label>
+                        <input type="text" name="ativo" placeholder="Ex: CPLES15" required class="w-full bg-[#131f33] border border-[#16253b] rounded-lg p-2 text-white uppercase focus:outline-none">
+                    </div>
+                    <div>
+                        <label class="block text-gray-400 mb-0.5">Tipo</label>
+                        <select name="tipo" class="w-full bg-[#131f33] border border-[#16253b] rounded-lg p-2 text-white focus:outline-none">
+                            <option value="PUT">PUT (Venda)</option>
+                            <option value="CALL">CALL (Venda)</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-gray-400 mb-0.5">Strike (R$)</label>
+                        <input type="number" name="strike" step="0.01" placeholder="15.28" required class="w-full bg-[#131f33] border border-[#16253b] rounded-lg p-2 text-white focus:outline-none">
+                    </div>
+                    <div>
+                        <label class="block text-gray-400 mb-0.5">Prêmio Unit. (R$)</label>
+                        <input type="number" name="premio" step="0.01" placeholder="0.45" required class="w-full bg-[#131f33] border border-[#16253b] rounded-lg p-2 text-white focus:outline-none">
+                    </div>
+                    <div>
+                        <label class="block text-gray-400 mb-0.5">Contratos (Lotes)</label>
+                        <input type="number" name="contratos" value="1" min="1" class="w-full bg-[#131f33] border border-[#16253b] rounded-lg p-2 text-white focus:outline-none">
+                    </div>
+                    <div>
+                        <label class="block text-gray-400 mb-0.5">Vencimento</label>
+                        <input type="date" name="vencimento" required class="w-full bg-[#131f33] border border-[#16253b] rounded-lg p-2 text-white focus:outline-none">
+                    </div>
+                    <div class="hidden"><input type="hidden" name="custos" value="0.00"><input type="hidden" name="estrategia" value="Wheel Strategy"><input type="hidden" name="nota" value="10"></div>
+                    <div>
+                        <label class="block text-gray-400 mb-0.5">Status</label>
+                        <select name="status" class="w-full bg-[#131f33] border border-[#16253b] rounded-lg p-2 text-white focus:outline-none">
+                            <option value="Aberta">Aberta</option>
+                            <option value="Encerrada">Encerrada</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-gray-400 mb-0.5">Alertas / Obs</label>
+                        <input type="text" name="alerta" placeholder="Abaixo do suporte" class="w-full bg-[#131f33] border border-[#16253b] rounded-lg p-2 text-white focus:outline-none">
+                    </div>
+                    <div class="md:col-span-4 flex justify-end mt-1">
+                        <button type="submit" class="bg-emerald-600 hover:bg-emerald-700 text-white font-bold px-6 py-2 rounded-lg cursor-pointer">SALVAR OPERAÇÃO</button>
+                    </div>
+                </form>
+            </div>
         </div>
 
         <div class="card-bg rounded-2xl overflow-hidden">
-            <div class="p-5 border-b border-[#16253b] flex justify-between items-center">
+            <div class="p-4 border-b border-[#16253b] flex justify-between items-center">
                 <h3 class="text-sm font-bold text-white flex items-center space-x-2">
-                    <i class="fa-solid fa-list-check text-blue-500"></i> <span>MONITORAMENTO COMPLETO DE OPERAÇÕES</span>
+                    <i class="fa-solid fa-list-check text-blue-500"></i> <span>MONITORAMENTO DE OPERAÇÕES</span>
                 </h3>
-                <div class="text-xs text-gray-400">
-                    Total: <span class="text-white font-bold">{{ total_operacoes }}</span> | Abertas: <span class="text-amber-400 font-bold">{{ qtd_abertas }}</span> | Encerradas: <span class="text-green-400 font-bold">{{ qtd_encerradas }}</span>
-                </div>
             </div>
             <div class="overflow-x-auto">
                 <table class="w-full text-left text-xs">
-                    <thead class="bg-[#0a111e] text-gray-400 font-bold uppercase tracking-wider border-b border-[#16253b]">
+                    <thead class="bg-[#0a111e] text-gray-400 font-bold uppercase border-b border-[#16253b]">
                         <tr>
                             <th class="p-4">Ativo</th>
                             <th class="p-4">Tipo</th>
                             <th class="p-4">Strike</th>
-                            <th class="p-4">Cotação Mãe</th>
+                            <th class="p-4">Ação Mãe</th>
                             <th class="p-4">Prêmio Unit.</th>
                             <th class="p-4">Contratos</th>
-                            <th class="p-4">Prêmio Líq. Recebido</th>
+                            <th class="p-4">Prêmio Líq.</th>
                             <th class="p-4">Vencimento</th>
                             <th class="p-4">Dias Rest.</th>
                             <th class="p-4">Status</th>
@@ -227,51 +187,57 @@
                     <tbody class="divide-y divide-[#16253b]">
                         {% for op in operacoes %}
                         <tr class="hover:bg-[#0d1726]/50 transition">
-                            <td class="p-4 font-bold text-white tracking-wide">{{ op.ativo }}</td>
+                            <td class="p-4 font-bold text-white">{{ op.ativo }}</td>
                             <td class="p-4">
-                                <span class="px-2 py-0.5 rounded text-[10px] font-extrabold {{ 'bg-blue-500/10 text-blue-400' if op.tipo == 'PUT' else 'bg-purple-500/10 text-purple-400' }}">
-                                    {{ op.tipo }}
-                                </span>
+                                <span class="px-2 py-0.5 rounded text-[10px] font-extrabold {{ 'bg-blue-500/10 text-blue-400' if op.tipo == 'PUT' else 'bg-purple-500/10 text-purple-400' }}">{{ op.tipo }}</span>
                             </td>
                             <td class="p-4 font-semibold">R$ {{ "{:,.2f}".format(op.strike).replace(".", ",") }}</td>
-                            <td class="p-4 text-gray-400">
+                            <td class="p-4 text-cyan-400 font-bold">
                                 {% if op.cotacao_atual > 0 %}
                                     R$ {{ "{:,.2f}".format(op.cotacao_atual).replace(".", ",") }}
                                 {% else %}
-                                    <span class="text-gray-600">---</span>
+                                    <span class="text-gray-600">Buscando...</span>
                                 {% endif %}
                             </td>
                             <td class="p-4 text-emerald-400">R$ {{ "{:,.2f}".format(op.premio).replace(".", ",") }}</td>
-                           <td class="p-4 font-medium text-gray-300">{{ op.contratos }} ({{ op.contratos * 100 }} un)</td>
+                            <td class="p-4 text-gray-300">{{ op.contratos }} ({{ op.contratos * 100 }} un)</td>
                             <td class="p-4 font-bold text-emerald-400">R$ {{ "{:,.2f}".format(op.premio_liquido).replace(",", "X").replace(".", ",").replace("X", ".") }}</td>
                             <td class="p-4 text-gray-400">{{ op.vencimento }}</td>
-                            <td class="p-4">
-                                {% if op.status == 'Aberta' %}
-                                    <span class="font-bold {{ 'text-red-400' if op.dias_restantes <= 5 else 'text-amber-400' if op.dias_restantes <= 15 else 'text-gray-300' }}">
-                                        {{ op.dias_restantes }} dias
-                                    </span>
-                                {% else %}
-                                    <span class="text-gray-500">Encerrado</span>
-                                {% endif %}
-                            </td>
-                            <td class="p-4">
-                                <span class="px-2 py-0.5 rounded-full text-[10px] font-bold {{ 'bg-amber-500/10 text-amber-400' if op.status == 'Aberta' else 'bg-green-500/10 text-green-400' }}">
-                                    {{ op.status }}
-                                </span>
-                            </td>
+                            <td class="p-4 font-bold text-amber-400">{{ op.dias_restantes }} dias</td>
+                            <td class="p-4"><span class="px-2 py-0.5 rounded-full text-[10px] font-bold {{ 'bg-amber-500/10 text-amber-400' if op.status == 'Aberta' else 'bg-green-500/10 text-green-400' }}">{{ op.status }}</span></td>
                         </tr>
                         {% endfor %}
-                        {% if not operacoes %}
-                        <tr>
-                            <td colspan="10" class="p-8 text-center text-gray-500 italic">Nenhum lançamento registrado. Use o formulário acima para começar!</td>
-                        </tr>
-                        {% endif %}
                     </tbody>
                 </table>
             </div>
         </div>
-        
     </div>
 
+    <script>
+        const ctx = document.getElementById('velocimetroRoi').getContext('2d');
+        const roiValor = parseFloat("{{ roi_abertas }}".replace(',', '.'));
+        
+        // Mantém o ponteiro dentro de limites visuais (Meta de 2% no meio)
+        const valorExibido = Math.min(Math.max(roiValor, 0), 4);
+
+        new Chart(ctx, {
+            type: 'doughnut',
+            data: {
+                datasets: [{
+                    data: [valorExibido, 4 - valorExibido],
+                    backgroundColor: ['#10b981', '#16253b'],
+                    borderWidth: 0,
+                    circumference: 180,
+                    rotation: 270,
+                    cutout: '85%'
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: { legend: { display: false }, tooltip: { enabled: false } }
+            }
+        });
+    </script>
 </body>
 </html>
